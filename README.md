@@ -76,7 +76,7 @@ WHERE l.status = 'ativo';
 -- ========================================
 -- 3. Cidades com Licenciamentos
 -- ========================================
--- Lista nomes das cidades que possuem pelo menos um licenciamento registrado (independente do status).
+-- Lista nomes das cidades que possuem pelo menos um licenciamento registrado.
 
 SELECT DISTINCT c.nome AS cidade
 FROM cidades c
@@ -85,7 +85,7 @@ JOIN licenciamentos l ON c.id_cidade = l.id_cidade;
 -- ========================================
 -- 4. Pessoas com Mais de um Licenciamento Ativo
 -- ========================================
--- Identifica pessoas que têm mais de um licenciamento ativo, mostrando o nome da pessoa e a quantidade com base no having count.
+-- Identifica pessoas que têm mais de um licenciamento ativo e a quantidade com base no having count.
 
 SELECT p.nome AS nome_pessoa,
        COUNT(*) AS qtd_licenciamentos_ativos
