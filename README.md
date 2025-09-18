@@ -1,6 +1,6 @@
 ## 📚 Seções
-- [INÍCIO](https://github.com/caroolps/QA-AS2-Group)  
-- [TESTES AUTOMATIZADOS](https://github.com/caroolps/AUTOMATIZADO/blob/main/README.md)  
+- [PLANO DE TESTE](https://github.com/caroolps/vox)  
+- [TESTE BANCO DE DADOS](https://github.com/caroolps/vox_bd/blob/main/README.md)  
 
 ---
 
