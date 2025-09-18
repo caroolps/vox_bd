@@ -71,7 +71,9 @@ WHERE l.status = 'ativo'
 -- Join para unir tabelas
 -- Where para filtrar status
 
-SELECT DISTINCT p.nome AS nome_pessoa
+SELECT DISTINCT 
+    p.nome AS nome_pessoa,
+    l.status AS status_licenciamento
 FROM pessoas p
 JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
 WHERE l.status = 'ativo';
