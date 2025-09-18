@@ -49,8 +49,8 @@ CREATE TABLE licenciamentos (
 -- ========================================
 -- 1. Licenciamentos Ativos Vencidos
 -- ========================================
--- Usado "join" para unir tabelas para pegar o nome da pessoa e cidade
--- Usado where para filtrar o status 'ativo'
+-- Mostra pessoas com licenciamento ainda marcado como ativo, mas com data vencida
+-- JOIN usado para unir pessoas e cidades e mostrar nomes
 
 SELECT 
     p.nome AS nome_pessoa,
@@ -58,54 +58,56 @@ SELECT
     l.atividade,
     l.data_validade
 FROM licenciamentos l
-JOIN pessoas p ON l.id_pessoa = p.id_pessoa
-JOIN cidades c ON l.id_cidade = c.id_cidade
+JOIN pessoas p ON l.id_pessoa = p.id_pessoa  -- Une licenciamentos com pessoas
+JOIN cidades c ON l.id_cidade = c.id_cidade  -- Une licenciamentos com cidades
 WHERE l.status = 'ativo'
-  AND l.data_validade < CURRENT_DATE;
+  AND l.data_validade < CURRENT_DATE;       
 
 -- ========================================
--- 3.  Listar Pessoas com Licenciamento Ativo
+-- 2. Pessoas com Licenciamento Ativo
 -- ========================================
--- Usado "join" para atrelar pessoas com licenciamentos
+-- Lista pessoas que possuem pelo menos um licenciamento ativo
 
 SELECT DISTINCT p.nome AS nome_pessoa
 FROM pessoas p
-JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
-WHERE l.status = 'ativo';
+JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa  
+WHERE l.status = 'ativo';                            
 
 -- ========================================
 -- 3. Cidades com Licenciamentos
 -- ========================================
--- Lista nomes das cidades que possuem pelo menos um licenciamento registrado.
+-- Lista cidades que possuem pelo menos um licenciamento
 
 SELECT DISTINCT c.nome AS cidade
 FROM cidades c
-JOIN licenciamentos l ON c.id_cidade = l.id_cidade;
+JOIN licenciamentos l ON c.id_cidade = l.id_cidade; -- Une cidades com licenciamentos
 
 -- ========================================
 -- 4. Pessoas com Mais de um Licenciamento Ativo
 -- ========================================
--- Identifica pessoas que têm mais de um licenciamento ativo e a quantidade com base no having count.
+-- Mostra pessoas que têm mais de um licenciamento ativo e quantos têm
+-- Having Count só quem tem mais de 1
 
 SELECT p.nome AS nome_pessoa,
        COUNT(*) AS qtd_licenciamentos_ativos
 FROM pessoas p
-JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
-WHERE l.status = 'ativo'
-GROUP BY p.nome
-HAVING COUNT(*) > 1;
+JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa  
+WHERE l.status = 'ativo'                             
+GROUP BY p.nome                                      
+HAVING COUNT(*) > 1;                                 
 
 -- ========================================
 -- 5. Relatório Mensal de Licenciamentos
 -- ========================================
--- Relatório com o número de licenciamentos emitidos por mês no último ano, agrupado por estado e mês.
--- Mostra: estado, ano/mês, quantidade
+-- Mostra quantos licenciamentos foram emitidos por estado e por mês no último ano
+-- Usa EXTRACT para separar ano e mês
 
 SELECT c.estado,
-       TO_CHAR(l.data_emissao, 'YYYY-MM') AS ano_mes,
+       EXTRACT(YEAR FROM l.data_emissao) AS ano,
+       EXTRACT(MONTH FROM l.data_emissao) AS mes,
        COUNT(*) AS qtd_licenciamentos
 FROM licenciamentos l
-JOIN cidades c ON l.id_cidade = c.id_cidade
-WHERE l.data_emissao >= (CURRENT_DATE - INTERVAL '1 year')
-GROUP BY c.estado, TO_CHAR(l.data_emissao, 'YYYY-MM')
-ORDER BY c.estado, ano_mes;
+JOIN cidades c ON l.id_cidade = c.id_cidade        
+WHERE l.data_emissao >= (CURRENT_DATE - INTERVAL '1 year') 
+GROUP BY c.estado, EXTRACT(YEAR FROM l.data_emissao), EXTRACT(MONTH FROM l.data_emissao)
+ORDER BY c.estado, ano, mes;                       
