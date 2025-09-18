@@ -12,7 +12,9 @@
 </details>
 
 ---
+
 ## 🖥️ Executando no SQL Server
+
 ### 🏢 Estrutura Simplificada do Banco
 
 ```sql
@@ -83,9 +85,17 @@ WHERE l.status = 'ativo';
 -- ========================================
 -- Lista cidades que possuem pelo menos um licenciamento registrado
 
-SELECT DISTINCT c.nome AS cidade
-FROM cidades c
-JOIN licenciamentos l ON c.id_cidade = l.id_cidade;
+SELECT 
+    c.nome AS cidade,
+    COUNT(l.id_licenciamento) AS quantidade_licenciamentos
+FROM 
+    cidades c
+JOIN 
+    licenciamentos l ON c.id_cidade = l.id_cidade
+GROUP BY 
+    c.nome
+ORDER BY 
+    quantidade_licenciamentos DESC; 
 
 -- ========================================
 -- 4. Pessoas com Mais de um Licenciamento Ativo
@@ -115,3 +125,64 @@ JOIN cidades c ON l.id_cidade = c.id_cidade
 WHERE l.data_emissao >= DATEADD(YEAR, -1, CAST(GETDATE() AS DATE)) 
 GROUP BY c.estado, YEAR(l.data_emissao), MONTH(l.data_emissao)
 ORDER BY c.estado, ano, mes;
+
+
+
+
+📝 Inserts de Teste
+-- ========================================
+-- Cidades
+-- ========================================
+INSERT INTO cidades (id_cidade, nome, estado) VALUES
+(1, 'São Paulo', 'SP'),
+(2, 'Campinas', 'SP'),
+(3, 'Rio de Janeiro', 'RJ'),
+(4, 'Niterói', 'RJ'),
+(5, 'Belo Horizonte', 'MG'),
+(6, 'Curitiba', 'PR');
+
+
+-- ========================================
+-- Inserir pessoas
+-- ========================================
+INSERT INTO pessoas (id_pessoa, nome, cpf, data_nascimento, id_cidade_residencia) VALUES
+(1, 'Caroline Sousa', '12345678901', '1990-05-10', 1),
+(2, 'João Silva', '23456789012', '1985-08-20', 2),
+(3, 'Maria Oliveira', '34567890123', '1992-12-01', 3),
+(4, 'Pedro Santos', '45678901234', '1988-03-15', 4),
+(5, 'Carlos Silva', '12345678901', '1985-06-10', 1),
+(6, 'Ana Souza', '23456789012', '1990-09-20', 2),
+(7, 'João Pereira', '34567890123', '1988-01-15', 3),
+(8, 'Lucas Santos', '56789012345', '1995-12-05', 5);
+
+
+-- ========================================
+-- Inserir licenciamentos
+-- ========================================
+-- Caroline: 2 ativos, 1 vencido
+INSERT INTO licenciamentos (id_licenciamento, id_pessoa, id_cidade, atividade, data_emissao, data_validade, status) VALUES
+(1, 1, 1, 'Comércio', '2024-01-10', '2025-01-10', 'ativo'),
+(2, 1, 1, 'Transporte', '2023-03-05', '2024-03-05', 'vencido'),
+(3, 1, 1, 'Saúde', '2024-04-01', '2025-04-01', 'ativo');
+
+-- João: 1 ativo
+INSERT INTO licenciamentos (id_licenciamento, id_pessoa, id_cidade, atividade, data_emissao, data_validade, status) VALUES
+(4, 2, 2, 'Construção', '2024-06-15', '2025-06-15', 'ativo');
+
+-- Maria: 1 ativo, 1 revogado
+INSERT INTO licenciamentos (id_licenciamento, id_pessoa, id_cidade, atividade, data_emissao, data_validade, status) VALUES
+(5, 3, 3, 'Educação', '2024-02-10', '2025-02-10', 'ativo'),
+(6, 3, 3, 'Serviços', '2023-09-20', '2024-09-20', 'revogado');
+
+-- Pedro: 1 vencido
+INSERT INTO licenciamentos (id_licenciamento, id_pessoa, id_cidade, atividade, data_emissao, data_validade, status) VALUES
+(7, 4, 4, 'Turismo', '2023-05-01', '2024-05-01', 'ativo');
+
+-- Últimos 12 meses para relatório
+INSERT INTO licenciamentos (id_licenciamento, id_pessoa, id_cidade, atividade, data_emissao, data_validade, status) VALUES
+(8, 5, 5, 'Educação', '2025-06-18', '2026-06-17', 'ativo'),
+(9, 6, 2, 'Serviços', '2025-05-10', '2026-05-09', 'ativo'),
+(10, 7, 3, 'Indústria', '2025-03-22', '2026-03-21', 'vencido'),
+(11, 8, 5, 'Comércio', '2025-08-01', '2026-07-31', 'ativo');
+
+
