@@ -46,6 +46,29 @@ CREATE TABLE licenciamentos (
   FOREIGN KEY (id_cidade) REFERENCES cidades(id_cidade)
 );
 
+-- ========================================
+-- 1. Licenciamentos Ativos Vencidos
+-- ========================================
+SELECT 
+    p.nome AS nome_pessoa,
+    c.nome AS cidade,
+    l.atividade,
+    l.data_validade
+FROM licenciamentos l
+JOIN pessoas p ON l.id_pessoa = p.id_pessoa
+JOIN cidades c ON l.id_cidade = c.id_cidade
+WHERE l.status = 'ativo'
+  AND l.data_validade < CURRENT_DATE;
+
+
+-- ========================================
+-- 3.  Listar Pessoas com Licenciamento Ativo
+-- ========================================
+SELECT DISTINCT p.nome AS nome_pessoa
+FROM pessoas p
+JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
+WHERE l.status = 'ativo';
+
 
 -- ========================================
 -- 3. Cidades com Licenciamentos
@@ -68,6 +91,7 @@ JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
 WHERE l.status = 'ativo'
 GROUP BY p.nome
 HAVING COUNT(*) > 1;
+
 
 -- ========================================
 -- 5. Relatório Mensal de Licenciamentos
