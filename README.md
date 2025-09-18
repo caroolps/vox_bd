@@ -49,6 +49,9 @@ CREATE TABLE licenciamentos (
 -- ========================================
 -- 1. Licenciamentos Ativos Vencidos
 -- ========================================
+-- Usado "join" para unir tabelas para pegar o nome da pessoa e cidade
+-- Usado where para filtrar o status 'ativo'
+
 SELECT 
     p.nome AS nome_pessoa,
     c.nome AS cidade,
@@ -73,8 +76,8 @@ WHERE l.status = 'ativo';
 -- ========================================
 -- 3. Cidades com Licenciamentos
 -- ========================================
--- Lista nomes das cidades que possuem pelo menos
--- um licenciamento registrado (independente do status).
+-- Lista nomes das cidades que possuem pelo menos um licenciamento registrado (independente do status).
+
 SELECT DISTINCT c.nome AS cidade
 FROM cidades c
 JOIN licenciamentos l ON c.id_cidade = l.id_cidade;
@@ -82,8 +85,9 @@ JOIN licenciamentos l ON c.id_cidade = l.id_cidade;
 -- ========================================
 -- 4. Pessoas com Mais de um Licenciamento Ativo
 -- ========================================
--- Identifica pessoas que têm mais de um licenciamento ativo,
--- mostrando o nome da pessoa e a quantidade.
+
+-- Identifica pessoas que têm mais de um licenciamento ativo, mostrando o nome da pessoa e a quantidade com base no having count.
+
 SELECT p.nome AS nome_pessoa,
        COUNT(*) AS qtd_licenciamentos_ativos
 FROM pessoas p
@@ -96,9 +100,9 @@ HAVING COUNT(*) > 1;
 -- ========================================
 -- 5. Relatório Mensal de Licenciamentos
 -- ========================================
--- Relatório com o número de licenciamentos emitidos por mês
--- no último ano, agrupado por estado e mês.
+-- Relatório com o número de licenciamentos emitidos por mês no último ano, agrupado por estado e mês.
 -- Mostra: estado, ano/mês, quantidade
+
 SELECT c.estado,
        TO_CHAR(l.data_emissao, 'YYYY-MM') AS ano_mes,
        COUNT(*) AS qtd_licenciamentos
