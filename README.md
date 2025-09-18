@@ -63,15 +63,15 @@ JOIN cidades c ON l.id_cidade = c.id_cidade
 WHERE l.status = 'ativo'
   AND l.data_validade < CURRENT_DATE;
 
-
 -- ========================================
 -- 3.  Listar Pessoas com Licenciamento Ativo
 -- ========================================
+-- Usado "join" para atrelar pessoas com licenciamentos
+
 SELECT DISTINCT p.nome AS nome_pessoa
 FROM pessoas p
 JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
 WHERE l.status = 'ativo';
-
 
 -- ========================================
 -- 3. Cidades com Licenciamentos
@@ -85,7 +85,6 @@ JOIN licenciamentos l ON c.id_cidade = l.id_cidade;
 -- ========================================
 -- 4. Pessoas com Mais de um Licenciamento Ativo
 -- ========================================
-
 -- Identifica pessoas que têm mais de um licenciamento ativo, mostrando o nome da pessoa e a quantidade com base no having count.
 
 SELECT p.nome AS nome_pessoa,
@@ -95,7 +94,6 @@ JOIN licenciamentos l ON p.id_pessoa = l.id_pessoa
 WHERE l.status = 'ativo'
 GROUP BY p.nome
 HAVING COUNT(*) > 1;
-
 
 -- ========================================
 -- 5. Relatório Mensal de Licenciamentos
